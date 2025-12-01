@@ -1,0 +1,6 @@
+﻿.idea
+.vscode
+input
+bin
+obj
+*.user
