@@ -27,7 +27,7 @@ public class Day01() : Day(1)
 
         int Run(string data)
         {
-            var moves = data.GetLines().Select(CreateMove);
+            var moves = data.GetLines().Select(Move.Parse);
 
             var dial = Initial;
             var count = 0;
@@ -52,7 +52,7 @@ public class Day01() : Day(1)
 
         int Run(string data)
         {
-            var moves = data.GetLines().Select(CreateMove);
+            var moves = data.GetLines().Select(Move.Parse);
         
             var dial = Initial;
             var count = 0;
@@ -60,10 +60,9 @@ public class Day01() : Day(1)
             foreach (var move in moves)
             {
                 var startedAtZero = dial == 0;
-            
                 dial += move.Value;
 
-                if (dial is <= 0 or >= Size) count += Math.Abs(dial) / Size;
+                count += Math.Abs(dial) / Size;
                 if (dial <= 0 && !startedAtZero) count++;
 
                 dial %= Size;
@@ -74,10 +73,9 @@ public class Day01() : Day(1)
         }
     }
 
-    private static Move CreateMove(string line) => new(line[0] == 'L', int.Parse(line[1..]));
-
     private record Move(bool TurnLeft, int Distance)
     {
+        public static Move Parse(string line) => new(line[0] == 'L', int.Parse(line[1..]));
         public override string ToString() => $"{(TurnLeft ? "L" : "R")}{Distance}";
         public int Value => Distance * (TurnLeft ? -1 : 1);
     }
