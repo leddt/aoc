@@ -111,5 +111,5 @@ public class Day20(ITestOutputHelper output)
         int H(V2 pos) => (end - pos).XyLength;
     }
 
-    IEnumerable<V2> Neighbors(Grid map, V2 pos) => map.Neighbors(pos, x => x.val == '.').Select(x => x.pos);
+    IEnumerable<V2> Neighbors(Grid map, V2 pos) => map.Neighbors(pos, predicate: x => x.val == '.').Select(x => x.pos);
 }
