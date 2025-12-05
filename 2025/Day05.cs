@@ -42,14 +42,16 @@ public class Day05() : Day(5)
 
         long Run(string data)
         {
-            var lines = data.GetLines();
-            var ranges = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(Range.Parse).ToList();
+            var ranges = data.GetLines()
+                .TakeWhile(x => !string.IsNullOrWhiteSpace(x))
+                .Select(Range.Parse)
+                .OrderBy(x => x.Min)
+                .ToList();
 
             for (var i = 0; i < ranges.Count; i++)
             {
                 var a = ranges[i];
                 
-                var hadMerge = false;
                 for (var j = i + 1; j < ranges.Count; j++)
                 {
                     var b = ranges[j];
@@ -57,34 +59,55 @@ public class Day05() : Day(5)
                     
                     a.MergeWith(b);
                     ranges.RemoveAt(j--);
-                    hadMerge = true;
                 }
-                
-                // If we merged, we need to re-check the range
-                if (hadMerge) i--;
             }
             
             return ranges.Sum(x => x.Size);
         }
     }
 
+    [Test]
+    public void Part2SinglePass()
+    {
+        Assert.That(Run(Sample), Is.EqualTo(14));
+        Console.WriteLine(Run(Input));
+        return;
+
+        long Run(string data)
+        {
+            var ranges = data.GetLines().TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(Range.Parse);
+            var merged = new List<Range>();
+
+            foreach (var range in ranges.OrderBy(x => x.Min))
+            {
+                var last = merged.LastOrDefault();
+                if (last?.Overlaps(range) == true)
+                    last.MergeWith(range);
+                else
+                    merged.Add(range);
+            }
+            
+            return merged.Sum(x => x.Size);
+        }
+    }
+
     private class Range(long min, long max)
     {
-        private long _min = min;
-        private long _max = max;
+        public long Min = min;
+        public long Max = max;
         
-        public long Size => _max - _min + 1;
+        public long Size => Max - Min + 1;
         
-        public bool Contains(long x) => x >= _min && x <= _max;
-        public bool Overlaps(Range other) => _min <= other._max && _max >= other._min;
+        public bool Contains(long x) => x >= Min && x <= Max;
+        public bool Overlaps(Range other) => Min <= other.Max && Max >= other.Min;
         
         public void MergeWith(Range other)
         {
-            _min = Math.Min(_min, other._min);
-            _max = Math.Max(_max, other._max);
+            Min = Math.Min(Min, other.Min);
+            Max = Math.Max(Max, other.Max);
         }
         
-        public override string ToString() => $"{_min}-{_max} ({Size})";
+        public override string ToString() => $"{Min}-{Max} ({Size})";
         
         public static Range Parse(string line)
         {
