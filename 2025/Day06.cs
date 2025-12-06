@@ -30,8 +30,13 @@ public class Day06() : Day(6)
             {
                 var op = lastLine[i];
                 var values = otherLines.Select(x => x[i]).ToArray();
-                
-                total += Calculate(op[0], values);
+
+                total += op switch
+                {
+                    "+" => values.Sum(),
+                    "*" => values.Aggregate(1L, (x, y) => x * y),
+                    _ => 0
+                };
             }
             
             return total;
@@ -54,44 +59,36 @@ public class Day06() : Day(6)
             var total = 0L;
             var i = 0;
             
-            while (true)
+            while (i < lastLine.Length)
             {
                 var start = i;
-                var end = i + 1;
-                
-                while (end < lastLine.Length && lastLine[end] == ' ') end++;
-                if (lastLine.Length > end) end--;
+
+                var end = lastLine.IndexOfAny(['+', '*'], start + 1) - 1;
+                if (end < 0) end = lastLine.Length;
                 
                 var op = lastLine[start];
-                var values = new List<long>();
+                var subTotal = op == '*' ? 1 : 0L;
                 
                 for (var c = start; c < end; c++)
                 {
-                    var value = "";
+                    var number = "";
                     
                     foreach (var line in otherLines)
                     {
                         if (line[c] != ' ')
-                            value += line[c];
+                            number += line[c];
                     }
-                    
-                    values.Add(long.Parse(value));
+
+                    var value = long.Parse(number);
+                    if (op == '+') subTotal += value;
+                    else subTotal *= value;
                 }
                 
-                total += Calculate(op, values);
-
-                if (end >= lastLine.Length) break;
+                total += subTotal;
                 i = end + 1;
             }
             
             return total;
         }
     }
-
-    private static long Calculate(char op, IEnumerable<long> values) => op switch
-    {
-        '+' => values.Sum(),
-        '*' => values.Aggregate(1L, (x, y) => x * y),
-        _ => 0
-    };
 }
