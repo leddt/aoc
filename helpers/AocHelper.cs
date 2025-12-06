@@ -10,7 +10,7 @@ public static class AocHelper
         var cachePath = $"input/{year}.{day:00}.txt";
         
         if (File.Exists(cachePath))
-            return (await File.ReadAllTextAsync(cachePath)).TrimEnd();
+            return (await File.ReadAllTextAsync(cachePath)).TrimEnd(['\n']);
         
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("Cookie", $"session={session}");
@@ -18,6 +18,6 @@ public static class AocHelper
         
         await File.WriteAllTextAsync(cachePath, input);
         
-        return input.TrimEnd();
+        return input.TrimEnd(['\n']);
     }
 }
