@@ -57,12 +57,10 @@ public class Day06() : Day(6)
             var otherLines = lines[..^1];
 
             var total = 0L;
-            var i = 0;
+            var start = 0;
             
-            while (i < lastLine.Length)
+            while (start < lastLine.Length)
             {
-                var start = i;
-
                 var end = lastLine.IndexOfAny(['+', '*'], start + 1) - 1;
                 if (end < 0) end = lastLine.Length;
                 
@@ -85,7 +83,7 @@ public class Day06() : Day(6)
                 }
                 
                 total += subTotal;
-                i = end + 1;
+                start = end + 1;
             }
             
             return total;
