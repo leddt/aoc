@@ -52,6 +52,17 @@ public class Day09() : Day(9)
                 // Note: this is incomplete. It doesn't catch cases where a rect is completely outside the shape.
                 // But it worked for my input.
                 
+                /* One way to test this would be to choose a point inside the rect and create a line from that point
+                 * to the far edge of the whole area. Then, count the number of times this line crosses one of the edge
+                 * of the polygon. If that count is even, the point is outside the polygon.
+                 * 
+                 * For example: if the rect is (10,10),(40,40)
+                 * - Choose a point inside, like it's center: (25,25).
+                 * - Create the line (0,25),(25,25)
+                 * - count = polygon.Where(line.Crosses)
+                 * - if (count % 2 == 0) return false;
+                 * */
+                
                 return true;
             }
         }
