@@ -2,23 +2,39 @@
 
 public class Day11() : Day(11)
 {
-    private const string Sample = """
-                                  aaa: you hhh
-                                  you: bbb ccc
-                                  bbb: ddd eee
-                                  ccc: ddd eee fff
-                                  ddd: ggg
-                                  eee: out
-                                  fff: out
-                                  ggg: out
-                                  hhh: ccc fff iii
-                                  iii: out
-                                  """;
+    private const string Sample1 = """
+                                   aaa: you hhh
+                                   you: bbb ccc
+                                   bbb: ddd eee
+                                   ccc: ddd eee fff
+                                   ddd: ggg
+                                   eee: out
+                                   fff: out
+                                   ggg: out
+                                   hhh: ccc fff iii
+                                   iii: out
+                                   """;
+
+    private const string Sample2 = """
+                                   svr: aaa bbb
+                                   aaa: fft
+                                   fft: ccc
+                                   bbb: tty
+                                   tty: ccc
+                                   ccc: ddd eee
+                                   ddd: hub
+                                   hub: fff
+                                   eee: dac
+                                   dac: fff
+                                   fff: ggg hhh
+                                   ggg: out
+                                   hhh: out
+                                   """;
     
     [Test]
     public void Part1()
     {
-        Assert.That(Run(Sample), Is.EqualTo(5));
+        Assert.That(Run(Sample1), Is.EqualTo(5));
         Console.WriteLine(Run(Input));
         return;
 
@@ -42,13 +58,30 @@ public class Day11() : Day(11)
     [Test]
     public void Part2()
     {
-        Assert.That(Run(Sample), Is.EqualTo(0));
+        Assert.That(Run(Sample2), Is.EqualTo(2));
         Console.WriteLine(Run(Input));
         return;
 
-        int Run(string data)
+        long Run(string data)
         {
-            return 0;
+            var devices = Parse(data);
+            Dictionary<string, long> cache = [];
+
+            return CountPaths("svr");
+
+            long CountPaths(string from, bool dac = false, bool fft = false)
+            {
+                var key = $"{from}:{dac}:{fft}";
+                if (cache.TryGetValue(key, out var count)) return count;
+
+                dac |= from == "dac";
+                fft |= from == "fft";
+                
+                if (from == "out" && dac && fft) return 1;
+                if (!devices.ContainsKey(from)) return 0;
+                
+                return cache[key] = devices[from].Sum(x => CountPaths(x, dac, fft));
+            }
         }
     }
 
