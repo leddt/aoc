@@ -8,6 +8,11 @@ public static class Extensions
             .Split('\n')
             .Select(x => x.Replace("\r", ""))
             .ToArray();
+        
+        public int[] SplitInts(string sep = ",") => value
+            .Split(sep)
+            .Select(int.Parse)
+            .ToArray();
     }
 
     private static readonly int DirCount = Enum.GetValues<Dir>().Length;
